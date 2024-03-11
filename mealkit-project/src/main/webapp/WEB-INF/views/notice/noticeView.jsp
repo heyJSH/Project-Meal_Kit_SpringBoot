@@ -9,17 +9,16 @@
 
 <!DOCTYPE html>
 
-
 <html>
 <head>
  	<meta charset="UTF-8">
     
     <title>공지사항 글수정</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/noticeS.css">
-    <link rel="icon" href="images/favicon.ico">
-    <script defer src="js/jquery-3.7.1.min.js"></script>
-    <script defer src="js/main.js"></script>
+    <link rel="stylesheet" href="/resources/css/main.css">
+    <link rel="stylesheet" href="/resources/css/noticeS.css">
+    <link rel="icon" href="/resources/images/favicon.ico">
+    <script defer src="/resources/js/jquery-3.7.1.min.js"></script>
+    <script defer src="/resources/js/main.js"></script>
     
 <title>공지사항 수정폼</title>
 </head>
