@@ -13,17 +13,18 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = {"com.humanedu.starbucks.mapper"})
+@ComponentScan(basePackages = "org.mealkitspringboot.service") // 비즈니스 로직(서비스) 사용을 위함
+@MapperScan(basePackages = {"org.mealkitspringboot.mapper"})
 public class DBConfig {
 	@Bean
 	public DataSource dataSource() {
 		HikariConfig hikariConfig = new HikariConfig();
 		hikariConfig.setDriverClassName("net.sf.log4jdbc.sql.jdbcapi.DriverSpy");
-		hikariConfig.setJdbcUrl("jdbc:oracle:thin:@1.220.247.78:1522:orcl");
-		hikariConfig.setUsername("jsp");
+		hikariConfig.setJdbcUrl("jdbc:log4jdbc:oracle:thin:@1.220.247.78:1522:orcl");
+		hikariConfig.setUsername("semi_project1");
 		hikariConfig.setPassword("123451");
 
-		hikariConfig.setPoolName("oracle-semi_project1");
+		hikariConfig.setPoolName("oracle-freebo");
 		hikariConfig.setMaximumPoolSize(5);
 
 		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
