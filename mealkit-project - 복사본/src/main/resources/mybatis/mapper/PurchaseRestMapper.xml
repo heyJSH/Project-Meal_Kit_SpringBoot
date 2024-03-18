@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mealkitspringboot.mapper.PurchaseMapper">
+
+    <delete id="materialDelete">
+        Delete from material where material_id = #{material_Id}
+    </delete>
+
+    <update id="materialUpdate">
+        update
+            material
+        set
+            material_nm = #{material_nm},
+            material_Classification = #{material_Classification}
+        where
+            material_id = #{material_Id}
+    </update>
+
+    <insert id="materialInsert">
+        insert into
+            material(material_nm, material_classification, material_quantity)
+        values
+            (#{material_Nm}, #{material_Classification}, #{material_Quantity})
+    </insert>
+
+
+    <select id="materialInfoModifyFirst" resultType="org.mealkitspringboot.domain.PurchaseVO">
+        select *
+        from material
+        order by material_id
+    </select>
+
+    <select id="materialInfoModifySecond" resultType="org.mealkitspringboot.domain.PurchaseVO">
+        select *
+        from material
+        where material_nm = #{material_Nm}
+    </select>
+
+    <update id ="materialModifyThird">
+        update material
+        set material_nm = #{material_Nm},
+            material_classification = #{material_Classification},
+            material_quantity = #{material_Quantity}
+        where material_id = #{material_Id}
+    </update>
+
+</mapper>

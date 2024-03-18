@@ -1,4 +1,5 @@
 <%@page import="java.sql.PreparedStatement"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!-- DB와 연결 -->
@@ -21,15 +22,15 @@
 	<!-- reset.css 연결 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.2/reset.min.css">
 	<!-- main.css 연결 -->
-	<link rel="stylesheet" href="./css/main.css" />
+	<link rel="stylesheet" href="/resources/css/main.css" />
 
-	
+
 	<!-- google font & google material icon -->
   <!-- Google 나눔고딕 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
-	
+
 	<!-- jQuery 연결 -->
 	<script defer src="./js/jquery-3.7.1.min.js"></script>
 	<style>
@@ -64,7 +65,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	margin: 20px auto;
-	
+
 }
 
 
@@ -80,7 +81,7 @@ body {
 	height: 50px;
 
 	font-size: 25px;
-} 
+}
 
 .nowsuppierbox{
 	position: absolute;
@@ -118,7 +119,7 @@ body {
 .forfooterbox {
 	width: 100%;
 	height: 118Px;
-	
+
 }
 
 
@@ -177,7 +178,7 @@ body {
 
 .manufaturing .manu_container {
 	display: flex;
-	
+
 }
 
 .manufaturing1 .manu_container {
@@ -192,7 +193,7 @@ body {
 
 .manufaturing1 .manu_container div {
 	margin-right: -40px;
-	
+
 }
 
 
@@ -313,7 +314,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	
+
 	margin: 40px auto;
 	margin-top: 80px;
 	margin-bottom: -20px;
@@ -339,7 +340,7 @@ body {
 	height: 40px;
 	margin-left: 100px;
 	margin-right: 100px;
-	
+
 }
 
 
@@ -362,18 +363,17 @@ body {
 	text-align: center;
 	align-items: center;
 }
-	
+
 .i333{
 	width: 100px;
 }
 	</style>
 </head>
 <body>
-	<!-- header 공통 부분 연결 -->
-	<%@ include file="header.jsp" %>
-	
+
+
 	<!-- ============================================================================== -->
-	
+
 	<!-- 본인 컨텐츠는 여기서 쓰면 됩니다 -->
 
 
@@ -383,31 +383,12 @@ body {
 				<div class = "movingbtn1"><a href = "./firstFinal.jsp">구매계약</a></div>
 				<div class = "movingbtn2"><a href = "./modifysup.jsp">업체현황</a></div>
 				<div class = "movingbtn3"><a href = "./showingPurchase.jsp">계약현황</a></div>
-			</div>		
+			</div>
 		</div>
-					
-		<div class="manufaturing">
-		<%
-		
-		request.setCharacterEncoding("UTF-8");
 
-		String JDBC_URL = "jdbc:oracle:thin:@1.220.247.78:1522:orcl";
-		String USER = "SEMI_PROJECT1";
-		String PASSWORD = "123451";
-		
-		Connection connection = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		try {
-			connection = DBConfig.getConnection();
-			System.out.println("접속성공");
-		} catch(SQLException se) {
-			System.out.println("접속실패");
-		}
-	%>
+		<div class="manufaturing">
 		<div class="manu_container">
-	
+
 			<div class="lot_table">
 				<div>
 					<table>
@@ -421,50 +402,32 @@ body {
 				</table>
 				<div class="inst_table">
 					<table>
-				<%
-					try{
-						String sql = "SELECT * FROM MATERIAL ORDER BY MATERIAL_ID DESC";
-						stmt = connection.createStatement();
-						rs = stmt.executeQuery(sql);
-						
-						while(rs.next()) {
-							int materialid  = rs.getInt("MATERIAL_ID");
-							String materialname = rs.getString("MATERIAL_NM");
-							String materialclass = rs.getString("MATERIAL_CLASSIFICATION");
-							int Materialquantity = rs.getInt("MATERIAL_QUANTITY");
-							
-							%>
-							<tr>
-								<td class="i11" id = "materialid" name = "materialid"><%= materialid %></td>
-								<td class="i22"><%= materialname %></td>
-								<td class="i33"><%= materialclass %></td>
-								<td class="i44"><%= Materialquantity %></td>
-								<td class="i55" style="cursor: pointer" onClick = "javascript: deletematerialinfo(<%=materialid%>)">
-									X
-								</td>
-							</tr>
-							
-							<%
-								}
-							rs.close();
-							stmt.close();
-							} catch(Exception e){
-								
-							}
-				%>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	
+
+                        <tr>
+                      <c:forEach items="${modifyList}" var="modify">
+                            <td class="i11" id = "materialid" name = "materialid"><c:out value="${modify.material_Id}"/></td>
+                            <td class="i22"><c:out value="${modify.material_Nm}"/></td>
+                            <td class="i33"><c:out value="${modify.material_Classification}"/></td>
+                            <td class="i44"><c:out value="${modify.material_Quantity}"/></td>
+                            <td class="i55" style="cursor: pointer" onClick = 'javascript: deletematerialinfo(<c:out value="${modify.material_Id}"/>)'>
+                                X
+                            </td>
+                      </c:forEach>
+                        </tr>
+
+					</table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class = "forfooterbox">
 	<div class = "insertsuppierbigbox">
 		<div class = "insertsuppierbox">
 			<div class = "insertsuppier">원자재추가</div>
 		</div>
-		
+
 <div class="manufaturing1">
 	<div class="manu_container">
 		<div class="lot_table">
@@ -488,13 +451,10 @@ body {
 			</div>
 		</div>
 	</div>
-</div>	
+</div>
 </div>
 		<!-- ============================================================================== -->
-	
-	<!-- footer 공통 부분 연결 -->
-	<%@ include file="footer.jsp" %>
-	
+
 	
 	<script>
 	function deletematerialinfo(num){
