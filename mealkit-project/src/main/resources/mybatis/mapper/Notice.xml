@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mealkitspringboot.mapper.NoticeMapper">
+
+    <select id="getNoticeList" resultType="org.mealkitspringboot.domain.NoticeVO">
+        SELECT
+            NO_NUM AS noNum,
+            TITLE,
+            HIT,
+            REGDATE
+        FROM
+            notice
+        WHERE
+            1=1
+        <if test="search != null">
+            <if test="search != ''">
+                AND title LIKE '%' || #{search} || '%'
+            </if>
+            <if test="search == ''">
+                AND 1=0
+            </if>
+        </if>
+        ORDER BY
+        NO_NUM DESC fetch first 5 rows only
+    </select>
+
+    <!--공지사항 등록-->
+    <insert id="putInsert">
+        INSERT INTO NOTICE(NO_NUM, TITLE, CONTENT, HTT, FILE1_PATH, FILE2_PATH)
+        VALUES (#{noNum}, #{title}, #{content}, #{hit}, #{file1Path}, #{file2Path})
+    </insert>
+
+    <!--공지사항 수정-->
+    <!--1. 공지사항 상세 조회-->
+    <select id="getFreeBoardOne"  resultType="org.mealkitspringboot.domain.NoticeVO">
+        SELECT
+            *
+        FROM
+            NOTICE
+        WHERE
+             NO_NUM = #{noNum}
+    </select>
+
+    <!--1. 공지사항 수정-->
+    <update id="updateFreeBoard">
+        UPDATE
+            NOTICE
+        SET
+        TITLE = #{TITLE}
+        , CONTENT = #{CONTENT}
+        <if test="file1Path != null">
+            ,FILE1_PATH = #{file1Path}
+        </if>
+        <if test="file2Path != null">
+            ,FILE2_PATH = #{file2Path}
+        </if>
+        WHERE
+            NO_NUM = #{noNum}
+    </update>
+
+    <!--공지 사항 삭제-->
+    <delete id="delFreeBoard">
+        DELETE FROM NOTICE WHERE NO_NUM = #{noNum}
+    </delete>
+
+
+</mapper>

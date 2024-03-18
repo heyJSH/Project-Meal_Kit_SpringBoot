@@ -26,9 +26,9 @@ public class NoticeController {
     @GetMapping("/notice")
     public String notice(
             @RequestParam(value = "search", required = false) String search, Model model){
-        List<NoticeVO> noticeVOList;
+        List<NoticeVO> noticeVOList = noticeService.getNoticeList(search);
 
-        model.addAttribute("noticeVOList");
+        model.addAttribute("noticeVOList", noticeVOList);
         model.addAttribute("search", search);
         return "/notice/notice";
     }

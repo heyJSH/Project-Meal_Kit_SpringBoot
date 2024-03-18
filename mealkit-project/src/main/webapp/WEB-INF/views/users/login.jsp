@@ -58,7 +58,7 @@
 <body>
 <div class="container">
     <h1>Log in</h1>
-    <form class="login" th:action="@{/login}" method="post">
+    <form class="login" action="/login" method="post">
         <span>ID</span>
         <input type="text" id="Id" name="empId" placeholder="id" required>
         <span>Password</span>
@@ -67,7 +67,7 @@
             <label>
                 <input type="checkbox">아이디 저장
             </label>
-            <a href="#none" class="btn-forgot" th:href="@{/forgot-password}">비밀번호 찾기</a>
+            <a href="#none" class="btn-forgot">비밀번호 찾기</a>
         </p>
         <button type="submit">Log in</button>
     </form>

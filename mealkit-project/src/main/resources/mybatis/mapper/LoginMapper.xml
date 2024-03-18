@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mealkitspringboot.mapper.LoginMapper">
+
+    <select id="findByEmpIdAndEmpPw" resultType="org.mealkitspringboot.domain.EmployeesVO">
+        SELECT
+            *
+        FROM
+            employees
+        WHERE
+            emp_id = #{empId}
+        AND emp_pw = #{empPw}
+    </select>
+
+    <!--1. 마이페이지 상세 조회-->
+    <select id="getMyPage"  resultType="org.mealkitspringboot.domain.EmployeesVO">
+        SELECT
+            *
+        FROM
+            employees
+        WHERE
+            emp_id = #{empId}
+        AND emp_nm = #{empNm}
+
+    </select>
+
+    <!--1. 마이페이지 수정-->
+    <update id="updateMyPage">
+        UPDATE
+            employees
+        SET
+             emp_pw = #{empPw}
+            ,emp_contact = #{empContact}
+        WHERE
+            emp_id = #{empId}
+    </update>
+
+</mapper>

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@page import="utils.DBConfig"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page import="java.sql.*" %>
 <%@page import="java.util.*" %>
 
@@ -18,13 +18,11 @@
   
   </head>
 <body>
-	<%@ include file="header.jsp" %>
-	
+
 	 <div class="card">
         <div class="card-header1">
-            <h1><a href="./notice.jsp">글쓰기</a></h1>
+            <h1><a href="/notice">글쓰기</a></h1>
         </div>
-        <form action="./noticeInsert.jsp" method="post" id="form1" onSubmit="return false" enctype="multipart/form-data">
 	        <div class="card-write">
 	            <div class="myinfo">
 	                이름<input type="text" id="korname" name="korname" placeholder="이름을 입력하세요.">
@@ -42,7 +40,6 @@
 	        	<input type="submit" value="작성" class="input-btn-w" onClick="javascript: prevCheckTextBox();" />
         	</div>
           </div>
-        </form>
     </div>
     
     

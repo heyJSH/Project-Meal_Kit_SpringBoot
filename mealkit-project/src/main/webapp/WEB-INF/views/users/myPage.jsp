@@ -1,7 +1,7 @@
 <%@ page import="java.sql.PreparedStatement"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page import="java.util.*" %>
 <!-- DB와 연결 -->
 <%@ page import = "java.sql.DriverManager" %>
@@ -63,9 +63,10 @@
 	
 </head>
 <body>
+  <!-- header 공통 부분 연결 -->
+    <%@ include file ="../includes/header.jsp" %>
 
-
-  <form class="mypage" method="post" th:action="@{/myPage}">
+  <form class="mypage" method="post" action="myPage">
  
   <div class="container">      
     <div class="insert">
@@ -75,12 +76,12 @@
      <table>
 	    <tr>
 	        <td class="col1">이름</td>
-	        <td class="col2"><input type="text" name="myname" placeholder="이름 입력" maxlength="5" required  readonly ></td>
+	        <td class="col2"><input type="text" name="myname" placeholder="이름 입력" value='<c:out value="${myPage.empNm}" />'> maxlength="5" required  readonly ></td>
 	    </tr>
 	    <tr>
 	        <td class="col1">아이디</td>
 	        <td class="col2">
-	            <input type="text" name="myid"placeholder="아이디 입력" maxlength="10" required  readonly >
+	            <input type="text" name="myid"placeholder="아이디 입력" value='<c:out value="${myPage.empId}" />'>maxlength="10" required  readonly >
 	        </td>
 	    </tr>
 	    <tr>
