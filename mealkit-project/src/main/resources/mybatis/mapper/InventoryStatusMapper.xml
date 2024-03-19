@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.MealKit.mapper.InventoryStatusMapper">
+    <select id="selectInvenProd" resultType="org.MealKit.domain.FinishedProductVO">
+        SELECT
+            PRODUCT_ID,
+            PRODUCT_NM,
+            PRODUCT_QUANTITY,
+            PRODUCT_SPEC
+        FROM
+            FINISHED_PRODUCT
+        ORDER BY
+            PRODUCT_ID ASC
+    </select>
+    <select id="selectInvenMate" resultType="org.MealKit.domain.InvenMateVO">
+        SELECT DISTINCT
+            M.MATERIAL_ID,
+            M.MATERIAL_NM,
+            M.MATERIAL_QUANTITY,
+            B.QUANTITY_UNITS
+        FROM
+            MATERIAL M
+        INNER JOIN
+            BOM B
+        ON
+            M.MATERIAL_ID = B.MATERIAL_ID
+        ORDER BY
+            M.MATERIAL_ID ASC
+    </select>
+</mapper>

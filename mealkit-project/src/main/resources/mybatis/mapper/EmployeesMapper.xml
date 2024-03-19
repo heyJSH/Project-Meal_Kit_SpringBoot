@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.MealKit.mapper.EmployeesMapper">
+    <select id="selectEmployees" resultType="org.MealKit.domain.EmployeesVO">
+        SELECT
+            EMP_ID,
+            EMP_PW,
+            EMP_NM,
+            EMP_CONTACT,
+            DEP_ID,
+            DEP_NM,
+            EMP_ROLE
+        FROM
+            EMPLOYEES
+        ORDER BY
+            EMP_ID ASC
+    </select>
+    <insert id="insertEmployees">
+        INSERT INTO EMPLOYEES (
+            EMP_ID,
+            EMP_PW,
+            EMP_NM,
+            EMP_CONTACT,
+            DEP_ID,
+            DEP_NM,
+            EMP_ROLE)
+        VALUES (
+            seq_employees.nextval,
+            1234,
+            #{emp_nm},
+            #{emp_contact},
+            #{dep_id},
+            #{dep_nm},
+            #{emp_role})
+    </insert>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.MealKit.mapper.InstructionMapper">
+    <select id="selectInstProd" resultType="org.MealKit.domain.FinishedProductVO">
+        SELECT
+            PRODUCT_ID,
+            PRODUCT_NM,
+            PRODUCT_QUANTITY,
+            PRODUCT_SPEC
+        FROM
+            FINISHED_PRODUCT
+        ORDER BY
+            PRODUCT_ID ASC
+    </select>
+    <select id="selectInstruction" resultType="org.MealKit.domain.InstructionVO">
+        SELECT
+            I.LOT_ID,
+            (SELECT
+                E1.EMP_NM
+            FROM
+                EMPLOYEES E1
+            WHERE
+                E1.EMP_ID = I.INST_ID) AS INST_NM,
+            I.PRODUCT_ID,
+            I.LOT_SIZE,
+            I.OUTPUT,
+            TO_CHAR(I.INST_DATE, 'YYYY/MM/DD') AS INST_DATE,
+            TO_CHAR(I.MANU_DATE, 'YYYY/MM/DD') AS MANU_DATE,
+            (SELECT
+                E2.EMP_NM
+            FROM
+                EMPLOYEES E2
+            WHERE
+                E2.EMP_ID = I.MANU_ID) AS MANU_NM,
+            CASE WHEN EXISTS
+                (SELECT
+                    M.LOT_ID
+                FROM
+                    MANUFACTURING M
+                WHERE
+                    M.LOT_ID = I.LOT_ID)
+                THEN
+                    '미완료'
+                ELSE
+                    '완료'
+                END AS COMPLETION
+        FROM
+            INSTRUCTION I
+        ORDER BY
+            I.LOT_ID DESC
+    </select>
+    <insert id="insertInstruction">
+        INSERT INTO INSTRUCTION (
+            LOT_ID,
+            INST_ID,
+            PRODUCT_ID,
+            LOT_SIZE,
+            INST_DATE)
+        VALUES (
+            seq_instruction.nextval,
+            #{inst_id},
+            #{product_id},
+            #{lot_size},
+            #{inst_date})
+    </insert>
+    <insert id="insertManufacturing">
+        INSERT INTO MANUFACTURING (
+            LOT_ID,
+            INST_ID,
+            PRODUCT_ID,
+            LOT_SIZE,
+            INST_DATE)
+        VALUES (
+            seq_manufacturing.nextval,
+            #{inst_id},
+            #{product_id},
+            #{lot_size},
+            #{inst_date})
+    </insert>
+    <select id="findEmployeeById" resultType="org.MealKit.domain.EmployeesVO">
+        SELECT
+            *
+        FROM
+            EMPLOYEES
+        WHERE
+            EMP_ID = #{empId}
+    </select>
+    <select id="findProductById" resultType="org.MealKit.domain.FinishedProductVO">
+        SELECT
+            *
+        FROM
+            FINISHED_PRODUCT
+        WHERE
+            PRODUCT_ID = #{productId}
+    </select>
+</mapper>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.MealKit.mapper.ManufacturingMapper">
+    <select id="selectManufacturing" resultType="org.MealKit.domain.ManufacturingVO">
+        SELECT
+            M.LOT_ID,
+            (SELECT
+                E.EMP_NM
+            FROM
+                EMPLOYEES E
+            WHERE
+                E.EMP_ID = M.INST_ID) AS INST_NM,
+            M.PRODUCT_ID,
+            M.LOT_SIZE,
+            M.OUTPUT,
+            TO_CHAR(M.INST_DATE, 'YYYY/MM/DD') AS INST_DATE,
+            M.MANU_DATE,
+            M.MANU_ID
+        FROM
+            MANUFACTURING M
+        ORDER BY
+            M.LOT_ID ASC
+    </select>
+    <select id="selectManuProd" resultType="org.MealKit.domain.FinishedProductVO">
+        SELECT
+            PRODUCT_ID,
+            PRODUCT_NM,
+            PRODUCT_QUANTITY,
+            PRODUCT_SPEC
+        FROM
+            FINISHED_PRODUCT
+        ORDER BY
+            PRODUCT_ID ASC
+    </select>
+    <select id="selectManuMate" resultType="org.MealKit.domain.ManuMateVO">
+        SELECT
+            M.MATERIAL_ID,
+            M.MATERIAL_NM,
+            M.MATERIAL_QUANTITY,
+            B.BOM_PROD_QUANTITY,
+            B.QUANTITY_UNITS,
+            CASE WHEN
+                M.MATERIAL_QUANTITY >= B.BOM_PROD_QUANTITY
+            THEN
+                '제조가능'
+            ELSE
+                '제조 불가능'
+            END AS MANUFACTURING_AVAILABILITY
+        FROM
+            FINISHED_PRODUCT FP
+        INNER JOIN
+            BOM B
+        ON
+            FP.PRODUCT_ID = B.PRODUCT_ID
+        INNER JOIN
+            MATERIAL M
+        ON
+            B.MATERIAL_ID = M.MATERIAL_ID
+        WHERE
+            FP.PRODUCT_ID = #{product_id}
+        ORDER BY
+            M.MATERIAL_ID ASC
+    </select>
+    <update id="updateManuProd">
+        UPDATE
+            FINISHED_PRODUCT
+        SET
+            PRODUCT_QUANTITY = #{new_quantity}
+        WHERE
+            PRODUCT_ID
+        IN
+            (SELECT
+                PRODUCT_ID
+            FROM
+                MANUFACTURING
+            WHERE
+                LOT_ID = #{lot_id})
+    </update>
+    <update id="updateManuMate">
+        UPDATE
+            MATERIAL
+        SET
+            MATERIAL_QUANTITY = MATERIAL_QUANTITY - #{material_to_deduct}
+        WHERE
+            MATERIAL_ID = #{material_id}
+    </update>
+    <update id="updateInstruction">
+        UPDATE
+            INSTRUCTION
+        SET
+            OUTPUT = #{output},
+            MANU_DATE = #{manu_date},
+            MANU_ID = #{manu_id}
+        WHERE
+            LOT_ID = #{lot_id}
+    </update>
+    <delete id="deleteManufacturing">
+        DELETE FROM
+            MANUFACTURING
+        WHERE
+            LOT_ID = #{lot_id}
+    </delete>
+    <select id="findEmployeeById" resultType="org.MealKit.domain.EmployeesVO">
+        SELECT
+            *
+        FROM
+            EMPLOYEES
+        WHERE
+            EMP_ID = #{empId}
+    </select>
+    <select id="findProductQuantity" resultType="org.MealKit.domain.FinishedProductVO">
+        SELECT
+            PRODUCT_QUANTITY
+        FROM
+            FINISHED_PRODUCT
+        WHERE
+            PRODUCT_ID = #{productId}
+    </select>
+</mapper>
