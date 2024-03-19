@@ -33,7 +33,7 @@
 	.order th{border-collapse:collapse; border: 1px solid #fff; box-sizing: border-box;}
 	.order2 td{border-collapse:collapse; border: 2px double #999; box-sizing: border-box;width:130px; 
 		background-color:white; color: black; text-align: center}
-	.containerM .reviewT{width: 1188px; height:366px; overflow-y:scroll; margin: 0 0 0 54px; box-sizing: content-box}
+	.containerM .reviewT{width: 1188px; height:366px; overflow-y:scroll; margin: 0 0 0 45px; box-sizing: content-box}
 
 </style>
 <title>Sales order select</title>
@@ -71,7 +71,8 @@
 
 <!-- ============================================================================== -->
 
-	<div class="reviewT">
+	<div>
+	    <div>
 		<table class="order">
 		  	<tr>
 				<th>주문번호</th>
@@ -85,6 +86,8 @@
 				<th>비고</th>
 			</tr>
 		  </table>
+		  </div>
+		 <div class="reviewT">
 		  <table class="order2">
 			<c:forEach items="${boardVOList}" var="board">
                 <tr>
@@ -100,8 +103,7 @@
                 </tr>
               </c:forEach>
             </table>
-           </div>
-
+          </div>
 	</div>
 <!-- ============================================================================== -->
 
