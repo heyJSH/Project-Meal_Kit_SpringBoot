@@ -45,4 +45,18 @@
         where material_id = #{material_Id}
     </update>
 
+    <select id="materialPurchaseSelectSupplier" resultType="org.mealkitspringboot.domain.PurchaseVO">
+        select sup_name
+        from supplier
+        where sup_sell like '%' || #{material_Nm} || '%'
+        order by sup_id
+    </select>
+
+    <insert id="materialPurchase">
+        insert into purchase
+            (purchase_id, purchase_date, supplier, product_name, product_quantity)
+        values
+            (PURCHASESEQ2.nextval, sysdate, #{sup_Name}, #{material_Nm}, #{material_quantity})
+    </insert>
+
 </mapper>

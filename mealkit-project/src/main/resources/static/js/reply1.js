@@ -97,6 +97,27 @@ var materialService = (function() {
             });
         }
 
+        function getPurchaseSupplier(param, callback, error) {
+            var name = (param.material_Nm);
+            console.log("replyjs, materialName",name);
+            $.ajax({
+                // request처리
+                type : 'post',                                      // form의 method속성 값
+                url : "/purchase/materialPurchaseSelectSupplier/" + name,          // form의 action값                  // json으로 string처리하면서 파라미터 전달
+                contentType : "application/json; charset=utf-8",    // content-type지정
+                // response처리
+                success : function(result, status, xhr) {           // call 성공시 오는 처리되는 함수
+                    if (callback) {
+                        callback(result);
+                    }
+                },
+                error : function(xhr, status, er) {                 // call 실패시 오는 처리되는 함수
+                    if (error) {
+                        error(er);
+                    }
+                }
+            });
+        }
 
     // 댓글 삭제
     function remove(material_id, callback, error) {
@@ -184,6 +205,7 @@ var materialService = (function() {
         add: replyAdd,
         getList: getList,
         getListSecond: getListSecond,
+        getPurchaseSupplier: getPurchaseSupplier,
         remove: remove,
         update: update,
         get: get,

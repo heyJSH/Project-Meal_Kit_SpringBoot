@@ -31,7 +31,7 @@
                 <th class = "movingMaterialUpdateBtn" onClick:'javascript: showMaterialModal(<c:out value="${material.material_Id}"/>)'> <c:out value="${material.material_Nm}"/> </th>
                 <th> <c:out value="${material.material_Classification}"/> </th>
                 <th> <c:out value="${material.material_Quantity}"/> </th>
-                <th id = "materialDeleteBtn" onClick = 'javascript: deleteMaterial(<c:out value="${material.material_Id}"/>)'> 삭제 </th>
+                <th id = "materialDeleteBtn" onClick = 'javascript: deleteMaterial(<c:out value="${material.material_Id}"/>)' style="cursor:pointer"> 삭제 </th>
             </tr>
             </c:forEach>
         </table>
@@ -42,7 +42,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <h5 class="modal-title" id="exampleModalLabel">재료 추가</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -76,7 +76,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">두번째 모달</h5>
+        <h5 class="modal-title" id="exampleModalLabel">재료 수정</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -107,17 +107,17 @@
 
 
 <script src="/resources/js/jquery-3.7.1.min.js"></script>
-<script src="/resources/js/reply.js"></script>
+<script src="/resources/js/reply1.js"></script>
 <script>
     function deleteMaterial(material_id) {
-        if(confirm("삭제하시겠습니까?")){
-        materialService.remove(                        // 백엔드에 ajax로 실제 db로 삭제
+        if(confirm("삭제하시겠습니까?")){               // 실제 삭제처리
+        materialService.remove(
             material_id,
             function(count) {
                 console.log('count:', count);
                 if (count === "success") {
                     //alert("REMOVED");
-                     $('#id'+ material_id).remove();       // 화면에 삭제처리
+                     $('#id'+ material_id).remove(); // 화면에서 삭제
                 }
             },
             function(err) {
@@ -162,7 +162,9 @@
 
         // 등록 ajax호출
         materialService.add(
-            { material_Nm: materialNm, material_Classification: materialClassification, material_Quantity: materialQuantity },       // request data
+            { material_Nm: materialNm,
+              material_Classification: materialClassification,
+              material_Quantity: materialQuantity },       // request data
             function(count) {
                 console.log('count:', count);
                 if (count === "success") {
@@ -229,7 +231,6 @@
     function changeselect() {
       var select = document.getElementById("secondModalBox");  // class = material인 데이터를 선택
       var selectValue = select.options[select.selectedIndex].value;   // select element에서 선택된 option의 value가 저장된다.
-
       console.log("jsp파일 changeselect",selectValue);
 
       var materialSelectSecond = $(".selectDeleteBox");

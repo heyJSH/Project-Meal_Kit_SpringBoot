@@ -28,8 +28,9 @@ public class purchaseRestController {
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
+
     @PostMapping(value = "/new",
-//            consumes = "application/json",
             produces = {MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<String> create(@RequestBody PurchaseVO vo){
 
@@ -68,4 +69,29 @@ public class purchaseRestController {
                 ? new ResponseEntity<>("success", HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @PostMapping(value = "/materialPurchaseSelectSupplier/{material_Nm}",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<PurchaseVO>> materialPurchaseSelectSupplier(@PathVariable ("material_Nm") String material_Nm){
+
+        List<PurchaseVO> purchaseVO = service.materialPurchaseSelectSupplier(material_Nm);
+
+        return new ResponseEntity<>(purchaseVO, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/purchaseMaterial",
+//            consumes = "application/json",
+            produces = {MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<String> purchaseMaterial(@RequestBody PurchaseVO vo){
+
+        log.info("Purchase: " +vo);
+        int insertCount = service.materialPurchase(vo);
+
+        return insertCount == 1 ? new ResponseEntity<>("success", HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
+
+
+
+
