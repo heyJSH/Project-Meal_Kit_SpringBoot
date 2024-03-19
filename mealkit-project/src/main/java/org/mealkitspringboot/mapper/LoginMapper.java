@@ -2,13 +2,13 @@ package org.mealkitspringboot.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.mealkitspringboot.domain.EmployeesVO;
-import org.mealkitspringboot.domain.NoticeVO;
 
+@Mapper
 public interface LoginMapper {
-    EmployeesVO findByEmpIdAndEmpPw(@Param("empId") int empId, @Param("empPw") String empPw); // 로그인
-    EmployeesVO getMyPage(int empId, String empNm);           // 마이페이지 조회
-    int updateMyPage(EmployeesVO employeesVO);  // 마이페이지 수정
+    EmployeesVO login(@Param("empId") int empId, @Param("empPw") String empPw); // 로그인
+    void updateMyPage(@Param("empId") int empId, @Param("empPw") String empPw, @Param("empContact") String empContact); // 마이페이지
 
-
+    EmployeesVO findPassword(@Param("empId") int empId, @Param("empContact") String empContact);
 }

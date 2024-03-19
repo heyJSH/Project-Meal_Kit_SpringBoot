@@ -6,9 +6,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Loginform</title>
-	<link rel="stylesheet" href="./css/login.css" />
-</head>
+<link rel="stylesheet" href="./css/login.css" />
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
 <style>
 .modal {
   display: none;
@@ -72,23 +74,23 @@
         <button type="submit">Log in</button>
     </form>
 </div>
- 
- <!-- 비밀번호 찾기  -->
-<div id="forgotPasswordModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>비밀번호 찾기</h2>
-    <!-- action을 findPassword.jsp로 설정 -->
-    <form id="forgotPasswordForm" action="findPassword.jsp" method="post" autocomplete="off">
-      <input id="input1" type="text" name="empId" placeholder="직원 번호" required>
-      <input id="input1" type="text" name="empContact" placeholder="직원 전화번호" required>    
 
-      <!-- 버튼 클릭 시 form 제출 -->
-      <button id ="button1" type="submit">비밀번호 찾기</button>
-    </form>
-  </div>
+
+<!-- 비밀번호 찾기  -->
+<div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+        <span class="close"></span>
+        <h2>비밀번호 찾기</h2>
+        <!-- action을 findPassword.jsp로 설정 -->
+        <form action="/findPassword" method="post">
+            <input id="input1" type="text" name="empId" placeholder="직원 번호" required>
+            <input id="input1" type="text" name="empContact" placeholder="직원 전화번호" required>
+
+            <!-- 버튼 클릭 시 form 제출 -->
+            <button id ="button1" type="submit">비밀번호 찾기</button>
+        </form>
+    </div>
 </div>
- 
 
  <script>
 	window.onload = function() {
@@ -98,7 +100,7 @@
 	    document.getElementById('Id').value = savedId;
 	    document.querySelector('input[type="checkbox"]').checked = true;
 	  }
-	
+
 	  // 로그인 폼 제출 시,아이디 저장
 	  document.querySelector('.login').onsubmit = function() {
 	    if (document.querySelector('input[type="checkbox"]').checked) {
@@ -110,18 +112,20 @@
 	    }
 	  };
 	}
-	
-	// 비밀번호 찾기 링크를 눌렀을때 보이게 
+
+	// 비밀번호 찾기 링크를 눌렀을때 보이게
 	document.querySelector('.btn-forgot').addEventListener('click', function(event) {
 	event.preventDefault();
 	document.getElementById('forgotPasswordModal').style.display = 'block';
 	});
-		
+
 	document.querySelector('.close').addEventListener('click', function() {
 	document.getElementById('forgotPasswordModal').style.display = 'none';
 	});
-		
-</script>
+
+ </script>
  
+
+
 </body>
 </html>

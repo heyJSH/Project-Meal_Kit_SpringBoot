@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.mealkitspringboot.mapper.LoginMapper">
 
-    <select id="findByEmpIdAndEmpPw" resultType="org.mealkitspringboot.domain.EmployeesVO">
-        SELECT
-            *
-        FROM
-            employees
-        WHERE
-            emp_id = #{empId}
-        AND emp_pw = #{empPw}
-    </select>
-
-    <!--1. 마이페이지 상세 조회-->
-    <select id="getMyPage"  resultType="org.mealkitspringboot.domain.EmployeesVO">
-        SELECT
-            *
-        FROM
-            employees
-        WHERE
-            emp_id = #{empId}
-        AND emp_nm = #{empNm}
-
-    </select>
-
-    <!--1. 마이페이지 수정-->
+    <!--마이페이지-->
     <update id="updateMyPage">
-        UPDATE
-            employees
-        SET
-             emp_pw = #{empPw}
-            ,emp_contact = #{empContact}
-        WHERE
-            emp_id = #{empId}
+        UPDATE employees
+        SET emp_pw = #{empPw}, emp_contact = #{empContact}
+        WHERE emp_id = #{empId}
     </update>
+
+    <!--비밀번호 찾기-->
+    <select id="findPassword" parameterType="map" resultType="org.mealkitspringboot.domain.EmployeesVO">
+        SELECT emp_pw
+        FROM EMPLOYEES
+        WHERE emp_id=#{empId} AND emp_contact=#{empContact}
+    </select>
+
+    <!--접근 제한 -->
+    <resultMap id="employeesResultMap" type="org.mealkitspringboot.domain.EmployeesVO">
+        <id property="emp_id" column="emp_id"/>
+        <result property="emp_pw" column="emp_pw"/>
+        <result property="emp_nm" column="emp_nm"/>
+        <result property="emp_contact" column="emp_contact"/>
+        <result property="dep_id" column="dep_id"/>
+        <result property="dep_nm" column="dep_nm"/>
+    </resultMap>
+
+    <!--로그인-->
+    <select id="login" resultMap="employeesResultMap">
+        SELECT * FROM employees WHERE emp_id = #{empId} AND emp_pw = #{empPw}
+    </select>
+
 
 </mapper>
