@@ -1,7 +1,5 @@
 @charset "UTF-8";
 
-/* 심신의 안정을 위해 해당 코드는 지우지 말 것 */
-
 body {
 	position: relative;
 }
@@ -102,4 +100,13 @@ body {
 
 .employees .table .t4 .inputField {
 	width: 150px;
+}
+
+.subject a:visited{
+    color: black;
+}
+
+.subject a:hover{
+    color: red;
+    text-decoration: underline;
 }

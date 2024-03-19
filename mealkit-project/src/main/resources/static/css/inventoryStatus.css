@@ -1,7 +1,5 @@
 @charset "UTF-8";
 
-/* 심신의 안정을 위해 해당 코드는 지우지 말 것 */
-
 body {
 	position: relative;
 }
@@ -97,4 +95,13 @@ body {
 .full_box .small_box .t3 {
 	border-collapse: collapse;
 	border-right: 1px solid black;
+}
+
+.subject a:visited{
+    color: black;
+}
+
+.subject a:hover{
+    color: red;
+    text-decoration: underline;
 }

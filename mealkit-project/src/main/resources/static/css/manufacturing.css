@@ -1,7 +1,5 @@
 @charset "UTF-8";
 
-/* 심신의 안정을 위해 해당 코드는 지우지 말 것 */
-
 body {
 	position: relative;
 }
@@ -101,7 +99,7 @@ body {
 }
 
 .manufacturing .table3 .t3_2{
-	width: 140px;
+	width: 125px;
 }
 
 .manufacturing .table3 .t3_3{
@@ -190,4 +188,17 @@ body {
 
 .manufacturing .table1 .t1_7 .inputField {
 	width: 110px;	
+}
+
+.manufacturing .table2 .content tr{
+    height: 43px;
+}
+
+.subject a:visited{
+    color: black;
+}
+
+.subject a:hover{
+    color: red;
+    text-decoration: underline;
 }

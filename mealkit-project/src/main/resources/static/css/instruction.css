@@ -1,7 +1,5 @@
 @charset "UTF-8";
 
-/* 심신의 안정을 위해 해당 코드는 지우지 말 것 */
-
 body {
 	position: relative;
 }
@@ -53,25 +51,25 @@ body {
 }
 
 .instruction .table1 table {
-	width: 230px;
+	width: 251px;
 }
 
 .instruction .table2 table {
-	width: 930px;
+	width: 915px;
 }
 
 .instruction .table1 .t1_1 {
-	width: 70px;
+	width: 80px;
 	border-collapse: collapse;
 	border-left: 1px solid black;
 }
 
 .instruction .table1 .t1_2 {
-	width: 70px;
+	width: 90px;
 }
 
 .instruction .table1 .t1_3 {
-	width: 85px;
+	width: 80px;
 	border-collapse: collapse;
 	border-right: 1px solid black;
 }
@@ -131,4 +129,17 @@ body {
 
 .instruction .table1 .content {
 	height: 350px;
+}
+
+.instruction .table1 .content tr{
+    height: 50px;
+}
+
+.subject a:visited{
+    color: black;
+}
+
+.subject a:hover{
+    color: red;
+    text-decoration: underline;
 }
