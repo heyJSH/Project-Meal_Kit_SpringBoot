@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.BoardMapper">
+  <select id="readBoard" resultType="org.zerock.domain.BoardVO">
+  SELECT
+    order_num,
+    cust_id,
+    cust_name,
+    product_id,
+    product_name,
+    quantity,
+    order_date,
+    requst_date
+  FROM
+    sales_order
+  WHERE
+    1=1
+  ORDER BY
+    ORDER_NUM DESC fetch first 5 rows only) returned net.sf.log4jdbc.sql.jdbcapi.PreparedStatementSpy@2c4ec154
+  </select>
+  <select id="readBoardList" resultType="org.zerock.domain.BoardVO">
+    SELECT
+      order_num,
+      cust_id,
+      cust_name,
+      product_id,
+      product_name,
+      quantity,
+      to_char(order_date, 'yyyy-MM-dd') as order_date,
+      to_char(requst_date, 'yyyy-MM-dd') as requst_date
+    FROM
+      sales_order
+    ORDER BY
+      order_num desc
+  </select>
+
+  <insert id="insertBoard">
+    INSERT INTO SALES_ORDER (
+        order_num,
+        cust_id,
+        cust_name,
+        product_id,
+        product_name,
+        quantity,
+        order_date,
+        requst_date,
+        emp_id,
+        emp_nm)
+    VALUES(
+        #{order_num},
+        #{cust_id},
+        #{cust_name},
+        #{product_id},
+        #{product_name},
+        #{quantity},
+        #{order_date},
+        #{requst_date},
+        #{emp_id},
+        #{emp_nm})
+  </insert>
+
+  <update id="updateBoard">
+    UPDATE sales_order
+    SET
+        order_num = #{order_num},
+        cust_id = #{cust_id},
+        cust_name = #{cust_name},
+        product_id = #{product_id},
+        product_name = #{product_name},
+        quantity = #{quantity}
+    WHERE
+        order_num = #{order_num}
+  </update>
+
+  <delete id="delBoard">
+    delete from sales_order where order_num = #{order_num}
+  </delete>
+
+</mapper>
