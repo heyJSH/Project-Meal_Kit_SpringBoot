@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mealkitspringboot.mapper.BomMapper">
+    <parameterMap id="criteriaParam" type="org.mealkitspringboot.domain.CriteriaDto"></parameterMap>
+    <!-- 제품명 옵션 검색 -->
+    <select id="getProdNmList" resultType="org.mealkitspringboot.domain.BomListDto">
+        SELECT
+            DISTINCT product_nm as prodNm
+        FROM
+            Finished_Product
+        ORDER BY
+            product_nm
+    </select>
+
+    <!-- 제품 규격 옵션 검색 -->
+    <select id="getProdDivList" resultType="org.mealkitspringboot.domain.BomListDto">
+        SELECT
+            DISTINCT product_div as prodDiv
+        FROM
+            Finished_Product
+        ORDER BY
+            product_div
+    </select>
+
+    <!-- 재료명 옵션 검색 -->
+    <select id="getMatNmList" resultType="org.mealkitspringboot.domain.BomListDto">
+        SELECT
+            material_nm as matNm
+        FROM
+            material
+        ORDER BY
+            material_nm
+    </select>
+
+    <!-- BOM 현황 - 제품 목록 조회 및 검색 -->
+    <select id="getList" resultType="org.mealkitspringboot.domain.BomListDto"
+            parameterType="org.mealkitspringboot.domain.CriteriaDto">
+        <![CDATA[
+        SELECT
+            ROWNUM as listSeq, T.bomId, T.prodId, T.prodNm, T.prodDiv, T.prodSpec,
+            T.lotId, T.lotSize,
+            T.matDiv, T.matId, T.matNm,
+            T.quantityUnits, T.bomProdQuantity
+        FROM (
+            SELECT
+                b.BOM_ID as bomId, b.PRODUCT_ID as prodId, fp.PRODUCT_NM as prodNm, fp.PRODUCT_DIV as prodDiv, fp.PRODUCT_SPEC as prodSpec,
+                i.LOT_ID as lotId, i.LOT_SIZE as lotSize,
+                m.MATERIAL_CLASSIFICATION as matDiv, b.MATERIAL_ID as matId, m.MATERIAL_NM as matNm,
+                b.QUANTITY_UNITS as quantityUnits, b.BOM_PROD_QUANTITY as bomProdQuantity
+            FROM
+                BOM b, FINISHED_PRODUCT fp, MATERIAL m, INSTRUCTION i
+            WHERE
+                b.PRODUCT_ID = fp.PRODUCT_ID
+                AND b.MATERIAL_ID = m.MATERIAL_ID
+                AND b.LOT_ID = i.LOT_ID
+        ]]>
+                <if test="prodNm != null and prodNm != ''">
+                    AND fp.PRODUCT_NM LIKE '%' || #{prodNm} || '%'
+                </if>
+                <if test="prodDiv != null and prodDiv != ''">
+                    AND fp.PRODUCT_DIV LIKE '%' || #{prodDiv} || '%'
+                </if>
+                <if test="matNm != null and matNm != ''">
+                    AND m.MATERIAL_NM LIKE '%' || #{matNm} || '%'
+                </if>
+                <![CDATA[
+            ORDER BY
+                b.BOM_ID, b.PRODUCT_ID, m.MATERIAL_CLASSIFICATION
+        ) T
+        ]]>
+    </select>
+
+    <!-- BOM 등록 ======================================================================== -->
+    <!-- 1. 사용자가 입력한 내용의 제품 조회 후, 있으면 skip, 없으면 insert -->
+    <select id="selectProd" resultType="org.mealkitspringboot.domain.BomInsertDto">
+        SELECT
+            fp.PRODUCT_ID as prodId
+        FROM
+            FINISHED_PRODUCT fp
+        WHERE
+            fp.PRODUCT_NM = #{prodNm}
+        AND
+            fp.PRODUCT_SPEC = #{prodSpec}
+    </select>
+    <insert id="insertProd">
+        INSERT INTO FINISHED_PRODUCT
+            (
+            PRODUCT_NM,
+            PRODUCT_DIV,
+            PRODUCT_SPEC,
+            PRODUCT_PRICE
+            )
+        VALUES
+            (
+            #{prodNm},
+            #{prodDiv},
+            #{prodSpec},
+            #{prodPrice}
+            )
+    </insert>
+    <!-- 2. 사용자가 입력한 내용의 재료 조회 후, 있으면 skip, 없으면 insert -->
+    <select id="selectMat" resultType="org.mealkitspringboot.domain.BomInsertDto" >
+        SELECT
+            m.MATERIAL_ID as matId
+        FROM
+            MATERIAL m
+        WHERE
+            m.MATERIAL_NM = #{matNm}
+    </select>
+    <insert id="insertMat">
+        INSERT INTO MATERIAL
+            (
+            MATERIAL_NM,
+            MATERIAL_CLASSIFICATION
+            )
+        VALUES
+            (
+            #{matNm},
+            #{matDiv}
+            )
+    </insert>
+    <!-- 3. 사용자가 입력한 공급업체 insert -->
+    <insert id="insertSup">
+        INSERT INTO SUPPLIER
+            (
+            SUP_NAME
+            , PHONE_NUM
+            , SUP_ADDRESS
+            , SUP_EMAIL
+            , SUP_SELL)
+        VALUES
+            (
+            #{supNm}
+            , #{supContact}
+            , #{supAddress}
+            , #{supEmail}
+            , #{supSell}
+            )
+    </insert>
+    <!-- 4. LOT_ID 조회 및 Insert -->
+    <select id="selectLot" resultType="org.mealkitspringboot.domain.BomInsertDto" >
+        SELECT
+            i.LOT_ID as lotId
+        FROM
+            INSTRUCTION i
+        WHERE
+            i.PRODUCT_ID =
+                (
+                SELECT fp.product_id as prodId
+                FROM FINISHED_PRODUCT fp
+                WHERE fp.PRODUCT_NM = #{prodNm}
+                AND fp.PRODUCT_SPEC = #{prodSpec}
+                )
+    </select>
+    <insert id="insertLot">
+        INSERT INTO INSTRUCTION
+            (
+            lot_id,
+            product_id,
+            lot_size
+            )
+        VALUES
+            (
+            seq_instruction.nextval
+            ,(SELECT fp.PRODUCT_ID as prodId FROM FINISHED_PRODUCT fp
+            WHERE fp.PRODUCT_NM = #{prodNm}
+            AND fp.PRODUCT_SPEC = #{prodSpec})
+            , 1000)
+    </insert>
+    <!-- 5. 기존의 bomId 있는지 조회 후, 있으면 id는 기존에 있던 값으로, 없으면 새로 INSERT -->
+    <select id="selectBomId" resultType="org.mealkitspringboot.domain.BomInsertDto">
+        SELECT
+            DISTINCT b.BOM_ID as bomId
+        FROM
+            BOM b
+        WHERE
+            b.PRODUCT_ID =
+            (
+            SELECT fp.product_id as prodId
+            FROM FINISHED_PRODUCT fp
+            WHERE fp.PRODUCT_NM = #{prodNm}
+            AND fp.PRODUCT_SPEC = #{prodSpec}
+            )
+    </select>
+    <!-- 5-1. 기존에 BOM_ID가 있는 경우(원래 있는 제품이고, 재료만 등록할 때.) -->
+    <insert id="insertBom1">
+        INSERT INTO BOM
+            (BOM_ID
+            , PRODUCT_ID
+            , MATERIAL_ID
+            , LOT_ID
+            , BOM_PROD_QUANTITY
+            , QUANTITY_UNITS
+            )
+        VALUES (
+            (SELECT DISTINCT b.BOM_ID as bomId
+                FROM BOM b
+                WHERE b.PRODUCT_ID =
+                (
+                SELECT fp.product_id as prodId
+                FROM FINISHED_PRODUCT fp
+                WHERE fp.PRODUCT_NM = #{prodNm}
+                AND fp.PRODUCT_SPEC = #{prodSpec}
+                )
+            )
+            , (
+            SELECT fp.product_id as prodId
+                FROM FINISHED_PRODUCT fp
+                WHERE fp.PRODUCT_NM = #{prodNm}
+                AND fp.PRODUCT_SPEC = #{prodSpec}
+            )
+            , (
+            SELECT m.MATERIAL_ID as matId
+                FROM MATERIAL m
+                WHERE m.MATERIAL_NM = #{matNm}
+            )
+            , (
+            SELECT i.LOT_ID as lotId
+                FROM INSTRUCTION i
+                WHERE i.PRODUCT_ID =
+                    (
+                    SELECT fp.product_id as prodId
+                    FROM FINISHED_PRODUCT fp
+                    WHERE fp.PRODUCT_NM = #{prodNm}
+                    AND fp.PRODUCT_SPEC = #{prodSpec}
+                    )
+            )
+            , #{bomProdQuantity} * (SELECT i.LOT_SIZE as lotSize
+                    FROM INSTRUCTION i
+                    WHERE i.PRODUCT_ID =
+                    (
+                    SELECT fp.product_id as prodId
+                        FROM FINISHED_PRODUCT fp
+                        WHERE fp.PRODUCT_NM = #{prodNm}
+                        AND fp.PRODUCT_SPEC = #{prodSpec}
+                        )
+            )
+            , #{quantityUnits}
+            )
+    </insert>
+    <!-- 5-2. 기존에 BOM이 없는 경우(원래 없던 제품이고, 새로 등록할 때.) -->
+    <insert id="insertBom2">
+        INSERT INTO BOM
+            (PRODUCT_ID
+            , MATERIAL_ID
+            , LOT_ID
+            , BOM_PROD_QUANTITY
+            , QUANTITY_UNITS
+            )
+        VALUES (
+            (
+            SELECT fp.product_id as prodId
+            FROM FINISHED_PRODUCT fp
+            WHERE fp.PRODUCT_NM = #{prodNm}
+            AND fp.PRODUCT_SPEC = #{prodSpec}
+            )
+            , (
+            SELECT m.MATERIAL_ID as matId
+            FROM MATERIAL m
+            WHERE m.MATERIAL_NM = #{matNm}
+            )
+            , (
+            SELECT i.LOT_ID as lotId
+            FROM INSTRUCTION i
+            WHERE i.PRODUCT_ID =
+            (
+            SELECT fp.product_id as prodId
+            FROM FINISHED_PRODUCT fp
+            WHERE fp.PRODUCT_NM = #{prodNm}
+            AND fp.PRODUCT_SPEC = #{prodSpec}
+            )
+            )
+            , #{bomProdQuantity} * (SELECT i.LOT_SIZE as lotSize
+            FROM INSTRUCTION i
+            WHERE i.PRODUCT_ID =
+            (
+            SELECT fp.product_id as prodId
+            FROM FINISHED_PRODUCT fp
+            WHERE fp.PRODUCT_NM = #{prodNm}
+            AND fp.PRODUCT_SPEC = #{prodSpec}
+            )
+            )
+            , #{quantityUnits}
+            )
+    </insert>
+
+    <!-- 현재 스크롤 위치(무한 스크롤) ====================================================== -->
+    <select id="readCurrval" resultType="java.lang.Integer">
+        select listSeq.currval from dual
+    </select>
+
+    <!-- 전체 BOM 개수 조회(무한 스크롤에 사용) -->
+    <select id="getCountByListSeq" resultType="int">
+        <![CDATA[
+            select count(#{listSeq}) from dual
+        ]]>
+    </select>
+
+    <!-- 체크한 BOM 삭제(여러개의 정보를 한번에 삭제할 수 있어야 함) -->
+    <delete id="delete" parameterType="org.mealkitspringboot.domain.BomDeleteDto">
+        DELETE FROM BOM
+        WHERE bom_id = #{bomId}
+        AND material_id = #{matId}
+    </delete>
+
+    <!-- BOM 수정 -->
+    <update id="update" parameterType="org.mealkitspringboot.domain.BomModifyDto">
+        BEGIN
+            UPDATE FINISHED_PRODUCT
+                SET
+                    PRODUCT_DIV = #{editData5},
+                    PRODUCT_SPEC = #{editData6}
+                WHERE
+                    PRODUCT_ID = #{editData3}
+            ;
+
+            UPDATE MATERIAL
+                SET
+                    MATERIAL_CLASSIFICATION = #{editData9}
+                WHERE
+                    MATERIAL_ID = #{editData10}
+            ;
+
+            UPDATE INSTRUCTION
+                SET
+                    LOT_SIZE = #{editData8}
+                WHERE
+                    LOT_ID = #{editData7}
+            ;
+
+            UPDATE BOM
+                SET
+                    BOM_PROD_QUANTITY = #{editData13},
+                    QUANTITY_UNITS = #{editData12}
+                WHERE
+                    BOM_ID = #{editData2}
+                AND PRODUCT_ID = #{editData3}
+                AND MATERIAL_ID = #{editData10}
+                AND LOT_ID = #{editData7}
+            ;
+
+            COMMIT;
+        END;
+
+    </update>
+
+
+</mapper>

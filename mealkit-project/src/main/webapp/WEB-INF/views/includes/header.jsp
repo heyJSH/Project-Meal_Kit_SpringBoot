@@ -125,7 +125,7 @@
                   <h4>BOM</h4>
                   <ul>
                     <li>
-                        <a href="/BomList">BOM 현황</a>
+                        <a href="/bom/getBomList">BOM 현황</a>
                     </li>
                     <li>
                         <a href="/bomInsertForm">BOM 등록</a>
