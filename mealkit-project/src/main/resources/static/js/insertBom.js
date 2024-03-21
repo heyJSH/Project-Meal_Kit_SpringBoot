@@ -184,9 +184,52 @@ formSubmitBtn.addEventListener("click", function(event){
     if(allDenyBtn.classList.contains('active')) {
 			alert('BOM 등록을 위해 동의해야 합니다.');
 		} else {
-			console.log('matNm', document.getElementById('matNm').value);
+			/*console.log('matNm', document.getElementById('matNm').value);
 			
-			form.submit();
+			form.submit();*/
+			
+			// FormData 객체 생성
+        var formData = new FormData();
+
+        // 재료 정보를 폼 데이터에 추가
+        for (var i = 0; i < matDataArray.length; i++) {
+            formData.append('materials[' + i + '].matNm', matDataArray[i].matNm);
+            formData.append('materials[' + i + '].matDiv', matDataArray[i].matDiv);
+            formData.append('materials[' + i + '].quantityUnits', matDataArray[i].quantityUnits);
+            formData.append('materials[' + i + '].bomProdQuantity', matDataArray[i].bomProdQuantity);
+        }
+
+        // 업체 정보를 폼 데이터에 추가
+        for (var j = 0; j < supDataArray.length; j++) {
+            formData.append('suppliers[' + j + '].supNm', supDataArray[j].supNm);
+            formData.append('suppliers[' + j + '].supContact', supDataArray[j].supContact);
+            formData.append('suppliers[' + j + '].supAddress', supDataArray[j].supAddress);
+            formData.append('suppliers[' + j + '].supEmail', supDataArray[j].supEmail);
+            formData.append('suppliers[' + j + '].supSell', supDataArray[j].supSell);
+        }
+
+        // AJAX 요청 설정
+        $.ajax({
+            type: "POST",
+            url: "/bom/registerBom",
+            data: formData, // FormData 객체 전달
+            processData: false, // 데이터 처리 방지
+            contentType: false, // 콘텐츠 유형 설정 방지
+            success: function(response) {
+                console.log(response);
+                alert("BOM 등록 성공");
+            },
+            error: function(xhr, status, error) {
+						    if(xhr.responseText) {
+						        console.error(xhr.responseText);
+						        alert("BOM 등록 에러: " + xhr.responseText); // 서버로부터 반환된 메시지 출력
+						    } else {
+						        console.error("서버에서 응답을 받지 못했습니다."); // 서버 응답이 없는 경우에 대한 처리
+						        alert("서버 응답이 없습니다. 관리자에게 문의하세요.");
+						    }
+						}
+
+        });
 		}
   }
 });
@@ -281,6 +324,8 @@ plusMatBtn.addEventListener("click", function (event) {
   // ★모달 트리거를 추가한 후, showNewMatList()를 호출하여 모달창 확인 없이 그냥 바로 목록을 추가한다.★
   // showNewMatList();
   
+  
+  
 });
 
 // 모달의 트리거(재료)를 삭제하는 함수
@@ -348,131 +393,117 @@ plusSupBtn.addEventListener("click", function (event) {
 
 /* ================================= */
 
-var matIndex = 0;
+/*var matIndex = 0;*/
 
 /* [재료추가] - 모달의 [확인] 버튼 클릭 시, 실행하는 함수 */
 function showNewMatList() {
-	
-	// 재료 수량과 단위를 가져옴
-	let quantity = parseFloat($('#bomProdQuantity').val());
-	let unit = $('#quantityUnits').val();
-	
-	// 단위가 'g'인 경우, 'kg'로 변환
-	if (unit.toLowerCase() === 'g') {
-		quantity /= 1000;
-		unit = 'kg';
-	}
-	
-	// 단위가 'ea'인 경우, 대문자로 변환
-	// toLowerCase() : 문자열을 소문자로 변환하는 JavaScript 내장 함수
-	// toUpperCase() : 문자열을 대문자로 변환
-	if(unit.toLowerCase() === 'ea') {
-		unit = unit.toUpperCase();
-	}
-	
-	// 중복 재료 추가 방지를 위해 추가된 재료 목록에서 검사
-	const existingMat = matDataArray.find(mat => mat.matNm === $('#matNm').val());
-	if(existingMat) {
-		alert('이미 추가된 재료입니다.');
-		return;
-	}
-	
-	// 2단계에서 저장할 데이터
-	matData = {
-		matNm: $('#matNm').val(),
-		matDiv: $('#matDiv').val(),
-		matQuantity: quantity,		// 변환된 수량 저장
-		matUnits: unit
-	};
-	
-	// 재료 데이터 배열에 추가
-	if(!existingMat) {
-		matDataArray.push(matData);	
-	}
-	
-	// 테이블에 새로운 행 추가
-	matTableBody = $('.newMatTable tbody');
-	console.log(matTableBody);
-  newMatRow = `<tr>
-							  <th scope="row">${matDataArray.length}</th>
-							  <td>${matData.matNm}</td>
-							  <td>${matData.matDiv}</td>
-							  <td>${matData.matQuantity}</td>
-							  <td>${matData.matUnits}</td>
-							</tr>`;
-  matTableBody.append(newMatRow);
-  
-  // 입력칸 값 초기화
-  $('#matNm').val($('#show_matNm').val());
-  //$('#form').append('<input type="hidden" name="matNm' + matIndex + '" id="matNm' + '" value="" />');
-  $('#form').append('<input type="hidden" name="matNm" id="matNm' + matIndex + '" value="" />');
-  $('#show_matNm').val('');
-  matIndex++;  
-  
-  $('#matDiv').val('');
-  $('#bomProdQuantity').val('');
-  $('#quantityUnits').val('');
-  
-  console.log('2단계 데이터:', matData);
-  
-  // 모달 트리거 비활성화
-  removeModalTrigger();
-	
-	// 재료 목록 활성화
-	$('.newMatLists').show();
-}
+    // 재료 수량과 단위를 가져옴
+    let quantity = parseFloat($('#bomProdQuantity').val());
+    let unit = $('#quantityUnits').val();
 
+    // 단위가 'g'인 경우, 'kg'로 변환
+    if (unit.toLowerCase() === 'g') {
+        quantity /= 1000;
+        unit = 'kg';
+    }
+
+    // 단위가 'ea'인 경우, 대문자로 변환
+    if (unit.toLowerCase() === 'ea') {
+        unit = unit.toUpperCase();
+    }
+
+    // 중복 재료 추가 방지를 위해 추가된 재료 목록에서 검사
+    const existingMat = matDataArray.find(mat => mat.matNm === $('#matNm').val());
+    if (existingMat) {
+        alert('이미 추가된 재료입니다.');
+        return;
+    }
+
+    // 2단계에서 저장할 데이터
+    matData = {
+        matNm: $('#matNm').val(),
+        matDiv: $('#matDiv').val(),
+        matQuantity: quantity,     // 변환된 수량 저장
+        matUnits: unit
+    };
+
+    // 재료 데이터 배열에 추가
+    if (!existingMat) {
+        matDataArray.push(matData);
+    }
+
+    // 테이블에 새로운 행 추가
+    matTableBody = $('.newMatTable tbody');
+    newMatRow = `<tr>
+                    <th scope="row">${matDataArray.length}</th>
+                    <td>${matData.matNm}</td>
+                    <td>${matData.matDiv}</td>
+                    <td>${matData.matQuantity}</td>
+                    <td>${matData.matUnits}</td>
+                </tr>`;
+    matTableBody.append(newMatRow);
+
+    // 입력칸 값 초기화
+    $('#matNm').val('').focus(); // 수정된 부분
+    $('#matDiv').val('');
+    $('#bomProdQuantity').val('');
+    $('#quantityUnits').val('');
+
+    // 모달 트리거 비활성화
+    removeModalTrigger();
+
+    // 재료 목록 활성화
+    $('.newMatLists').show();
+}
 
 /* [업체추가] - 모달의 [확인] 버튼 클릭 시, 실행하는 함수====================================== */
 function showNewSupList() {
-	
-	// 중복 업체 추가 방지를 위해 추가된 재료 목록에서 검사
-	const existingSup = supDataArray.find(sup => sup.supNm === $('#supNm').val());
-	if(existingSup) {
-		alert('이미 추가된 업체입니다.');
-		return;
-	}
-	
-	// 3단계에서 저장할 데이터
-	supData = {
-		supNm: $('#supNm').val(),
-		supContact: $('#supContact').val(),
-		supEmail: $('#supEmail').val(),
-		supAddress: $('#supAddress').val(),
-		supMatLists: $('#supSell').val()
-	};
-	
-	
-	// 업체 데이터 배열에 추가
-	supDataArray.push(supData);
-	
-	// 테이블에 새로운 행 추가
-	supTableBody = $('.newSupTable tbody');
-	newSupRow = `<tr>
-									  <th scope="row">${supDataArray.length}</th>
-									  <td>${supData.supNm}</td>
-									  <td>${supData.supContact}</td>
-									  <td>${supData.supEmail}</td>
-									  <td>${supData.supAddress}</td>
-									  <td>${supData.supMatLists}</td>
-  								</tr>`;
-	supTableBody.append(newSupRow);
-	
-	// 입력칸 값 초기화
-  $('#supNm').val('');
-  $('#supContact').val('');
-  $('#supEmail').val('');
-  $('#supAddress').val('');
-  $('#supSell').val('');
-	
-	console.log('3단계 데이터:', supData);
-	
-	// 모달 트리거 비활성화
-  removeModalTrigger2();
-	
-	// 업체 목록 활성화
-	$('.newSupLists').show();
+    // 중복 업체 추가 방지를 위해 추가된 재료 목록에서 검사
+    const existingSup = supDataArray.find(sup => sup.supNm === $('#supNm').val());
+    if (existingSup) {
+        alert('이미 추가된 업체입니다.');
+        return;
+    }
+
+    // 3단계에서 저장할 데이터
+    supData = {
+        supNm: $('#supNm').val(),
+        supContact: $('#supContact').val(),
+        supEmail: $('#supEmail').val(),
+        supAddress: $('#supAddress').val(),
+        supMatLists: $('#supSell').val()
+    };
+
+
+    // 업체 데이터 배열에 추가
+    supDataArray.push(supData);
+
+    // 테이블에 새로운 행 추가
+    supTableBody = $('.newSupTable tbody');
+    newSupRow = `<tr>
+                    <th scope="row">${supDataArray.length}</th>
+                    <td>${supData.supNm}</td>
+                    <td>${supData.supContact}</td>
+                    <td>${supData.supEmail}</td>
+                    <td>${supData.supAddress}</td>
+                    <td>${supData.supMatLists}</td>
+                </tr>`;
+    supTableBody.append(newSupRow);
+
+    // 입력칸 값 초기화
+    $('#supNm').val('').focus(); // 수정된 부분
+    $('#supContact').val('');
+    $('#supEmail').val('');
+    $('#supAddress').val('');
+    $('#supSell').val('');
+
+    // 모달 트리거 비활성화
+    removeModalTrigger2();
+
+    // 업체 목록 활성화
+    $('.newSupLists').show();
 }
+
 
 
 /* form4에서 동의, 비동의 버튼 활성화 */
@@ -485,4 +516,48 @@ allConfirmBtn.addEventListener("click", function(){
 	allDenyBtn.classList.remove('active');
 });
 
+/* BOM 등록 ajax */
+/*$(document).ready(function() {
+    $("#submitBtn").click(function(event) {
+        event.preventDefault();
+
+        // FormData 객체 생성
+        var formData = new FormData();
+
+        // 재료 정보를 폼 데이터에 추가
+        for (var i = 0; i < materialList.length; i++) {
+            formData.append('materials[' + i + '].matNm', materialList[i].matNm);
+            formData.append('materials[' + i + '].matDiv', materialList[i].matDiv);
+            formData.append('materials[' + i + '].quantityUnits', materialList[i].quantityUnits);
+            formData.append('materials[' + i + '].bomProdQuantity', materialList[i].bomProdQuantity);
+        }
+
+        // 업체 정보를 폼 데이터에 추가
+        for (var j = 0; j < supplierList.length; j++) {
+            formData.append('suppliers[' + j + '].supNm', supplierList[j].supNm);
+            formData.append('suppliers[' + j + '].supContact', supplierList[j].supContact);
+            formData.append('suppliers[' + j + '].supAddress', supplierList[j].supAddress);
+            formData.append('suppliers[' + j + '].supEmail', supplierList[j].supEmail);
+            formData.append('suppliers[' + j + '].supSell', supplierList[j].supSell);
+        }
+
+        // AJAX 요청 설정
+        $.ajax({
+            type: "POST",
+            url: "/registerBom",
+            data: formData, // FormData 객체 전달
+            processData: false, // 데이터 처리 방지
+            contentType: false, // 콘텐츠 유형 설정 방지
+            success: function(response) {
+                console.log(response);
+                alert("BOM 등록 성공");
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("BOM 등록 에러");
+            }
+        });
+    });
+});
+*/
 

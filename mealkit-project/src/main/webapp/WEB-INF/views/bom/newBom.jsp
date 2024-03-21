@@ -141,7 +141,7 @@
 		              <label for="matNm" class="formbold-form-label"> 재료명 </label>
 		              <input
 			              type="text"
-			              name="show_matNm"
+			              name="matNm"
 			              placeholder="밀키트에 들어가는 재료명"
 			              id="matNm"
 			              class="formbold-form-input"

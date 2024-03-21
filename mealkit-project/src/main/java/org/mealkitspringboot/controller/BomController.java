@@ -7,6 +7,9 @@ import org.mealkitspringboot.domain.BomModifyDto;
 import org.mealkitspringboot.domain.CriteriaDto;
 import org.mealkitspringboot.service.BomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -101,7 +104,7 @@ public class BomController {
      */
 
     // @RequestMapping(value = "/registerBom", method = {RequestMethod.GET, RequestMethod.POST})
-    @PostMapping("/registerBom")
+    /*@PostMapping("/registerBom")
     public String registerBom(@ModelAttribute BomInsertDto bomInsertDto, RedirectAttributes rttr) {
         log.info("registerBom: " + bomInsertDto);
 
@@ -114,7 +117,23 @@ public class BomController {
         }
 
         return "redirect:/bom/getBomList";
+    }*/
+
+    /* BOM 등록 - Ajax 처리 */
+    @PostMapping("/registerBom")
+    @ResponseBody
+    public ResponseEntity<String> registerBomAjax(@ModelAttribute BomInsertDto bomInsertDto) {
+        try {
+            bomService.registerBom(bomInsertDto);
+            log.info("registerBom: " + bomInsertDto);
+            return ResponseEntity.ok("BOM 등록 성공");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("BOM 등록 error: " + e.getMessage());
+        }
     }
+
+
 
 
 }
